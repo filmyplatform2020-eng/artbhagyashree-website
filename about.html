@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About — Art Bhagyashree Studio</title>
+  <meta name="description" content="Art Bhagyashree Studio — the creative studio of Rangoli artist Bhagyashree Deshpande. Large-scale, hyper-realistic Rangoli, live performances, workshops and public art.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+  <div id="site-header"></div>
+
+  <main>
+    <section class="inner-hero-section">
+      <div class="container inner-hero-content-wrapper">
+        <div class="tag-title">
+          <span class="tag-line"></span>
+          <span class="tag-text">About</span>
+        </div>
+        <h1 class="inner-hero-title">About Art Bhagyashree Studio</h1>
+        <p class="inner-hero-pg">An internationally recognised Indian art studio — where Rangoli becomes large-scale, hyper-realistic public art.</p>
+      </div>
+    </section>
+
+    <section class="about-section">
+      <div class="container">
+        <div class="about-content-wrapper">
+          <div class="about-right-content">
+            <div class="about-title-pg">
+              <div class="tag-title light">
+                <span class="tag-line"></span>
+                <span class="tag-text">The Studio</span>
+              </div>
+              <h2 class="about-section-title">Art Bhagyashree<br>Studio</h2>
+              <div class="about-pg-button">
+                <div class="about-pg-stack">
+                  <p class="about-pg">Art Bhagyashree Studio is the creative studio of artist Bhagyashree Deshpande, specialising in large-scale, hyper-realistic Rangoli installations, live cultural performances, workshops and public art experiences.</p>
+                  <p class="about-pg">Bhagyashree Deshpande is a Pune-based Rangoli artist who completed her education in Applied Arts. She creates immersive works in both traditional and realistic portrait Rangoli, and has developed a distinctive signature style for representing themes and stories through art.</p>
+                  <p class="about-pg">She has performed at festivals across India and at international art festivals in the USA, UK and South Korea — and has been part of two world-record Rangoli projects.</p>
+                </div>
+                <a class="primary-button button-white" href="portfolio.html">
+                  <span class="button-bg-color-shape" aria-hidden="true"></span>
+                  <span class="primary-button-text">View the Portfolio</span>
+                  <span class="primary-button-icon"><span class="button-icon-wrapper"><svg viewBox="0 0 16 12" fill="none" aria-hidden="true"><path d="M10.6 1 15 6l-4.4 5M15 6H1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><svg viewBox="0 0 16 12" fill="none" aria-hidden="true"><path d="M10.6 1 15 6l-4.4 5M15 6H1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></span>
+                </a>
+              </div>
+            </div>
+            <div class="counter-card-list" id="counter-list"></div>
+          </div>
+          <div class="about-left-content">
+            <div class="tag-title light">
+              <span class="tag-line"></span>
+              <span class="tag-text">From the Studio</span>
+            </div>
+            <a class="about-card" href="portfolio.html">
+              <div class="about-image-wrapper">
+                <img class="about-image" src="assets/img/full/photo-output_253.webp" alt="Bhagyashree at work on a portrait rangoli">
+              </div>
+              <div class="about-card-location">
+                <span class="about-location-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 21s-7-5.3-7-11a7 7 0 1 1 14 0c0 5.7-7 11-7 11Z"/><circle cx="12" cy="10" r="2.6"/></svg></span>
+                <span class="about-card-title">Pune, India</span>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="collections-showcase-section vision-section">
+      <div class="container">
+        <div class="showcase-content-wrapper">
+          <div class="sections-title">
+            <div class="tag-title">
+              <span class="tag-line"></span>
+              <span class="tag-text">Our Vision</span>
+            </div>
+            <h2 class="section-heading">Preserving a Living Tradition</h2>
+          </div>
+          <p class="vision-pg">To preserve, promote, and reimagine the traditional art of Indian Rangoli through world-class artistic excellence, cultural exchange, and meaningful public engagement. We believe Rangoli is more than decorative art — it is a universal language that brings people together, celebrates diversity, and creates unforgettable cultural experiences.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="testimonials-section">
+      <div class="container">
+        <div class="testimonials-content-wrapper">
+          <div class="sections-title">
+            <div class="tag-title">
+              <span class="tag-line"></span>
+              <span class="tag-text">Major Achievements</span>
+            </div>
+            <h2 class="section-heading">Recognised Across the Country</h2>
+          </div>
+          <div class="achievements-list" id="achievements-list"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="site-footer"></div>
+
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/pay.js"></script>
+  <script src="assets/js/app.js"></script>
+  <script src="assets/gsap/3.15.0/gsap.min.js"></script>
+  <script src="assets/gsap/3.15.0/ScrollTrigger.min.js"></script>
+  <script src="assets/js/motion.js"></script>
+  <script>
+    document.getElementById("counter-list").innerHTML = SITE.stats.map(function (s) {
+      return '<div class="counter-card"><div class="counter-title">' + s.num + '</div><div class="counter-pg">' + s.label + '</div></div>';
+    }).join("");
+    document.getElementById("achievements-list").innerHTML = ACHIEVEMENTS.map(function (a) {
+      return '<div class="achievement-item reveal">' +
+        '<span class="achievement-marker">' + ABS.icons.check + '</span>' +
+        '<div><div class="achievement-title">' + a.title + '</div>' +
+        '<div class="achievement-type">' + a.type + '</div></div>' +
+      '</div>';
+    }).join("");
+    ABS.initReveal();
+  </script>
+</body>
+</html>

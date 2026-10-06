@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Events &amp; Collaborations — Art Bhagyashree Studio</title>
+  <meta name="description" content="National events, brand collaborations, mall installations and international art festivals — Art Bhagyashree Studio brings large-scale Rangoli to diverse audiences.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+  <div id="site-header"></div>
+
+  <main>
+    <section class="inner-hero-section">
+      <div class="container inner-hero-content-wrapper">
+        <div class="tag-title">
+          <span class="tag-line"></span>
+          <span class="tag-text">Events &amp; Collaborations</span>
+        </div>
+        <h1 class="inner-hero-title">Art Beyond Boundaries</h1>
+        <p class="inner-hero-pg">From major cultural events and public celebrations to brand collaborations and international art festivals, Art Bhagyashree Studio brings large-scale artistic experiences to diverse audiences.</p>
+      </div>
+    </section>
+
+    <section class="collections-showcase-section">
+      <div class="container">
+        <div class="showcase-content-wrapper">
+          <div class="filter-row" id="event-filters"></div>
+          <div class="event-grid" id="events-grid"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="testimonials-section">
+      <div class="container">
+        <div class="testimonials-content-wrapper">
+          <div class="sections-title">
+            <div class="tag-title">
+              <span class="tag-line"></span>
+              <span class="tag-text">International</span>
+            </div>
+            <h2 class="section-heading">Representing India on the World Stage</h2>
+          </div>
+          <p class="vision-pg">Bhagyashree has represented Indian art and the traditional art of Rangoli at international art festivals in the USA, UK and South Korea.</p>
+          <div style="margin-top:var(--sp-xxl)">
+            <a class="primary-button" href="international.html">
+              <span class="button-bg-color-shape" aria-hidden="true"></span>
+              <span class="primary-button-text">Explore International Representation</span>
+              <span class="primary-button-icon"><span class="button-icon-wrapper" id="int-arrow"></span></span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="site-footer"></div>
+
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/pay.js"></script>
+  <script src="assets/js/app.js"></script>
+  <script src="assets/gsap/3.15.0/gsap.min.js"></script>
+  <script src="assets/gsap/3.15.0/ScrollTrigger.min.js"></script>
+  <script src="assets/js/motion.js"></script>
+  <script>
+    var active = "All";
+    function renderFilters() {
+      document.getElementById("event-filters").innerHTML = EVENT_FILTERS.map(function (f) {
+        return '<button class="filter-pill' + (f === active ? " active" : "") + '" data-filter="' + f + '">' + f + '</button>';
+      }).join("");
+      document.querySelectorAll(".filter-pill").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          active = btn.getAttribute("data-filter");
+          renderFilters();
+          renderEvents();
+        });
+      });
+    }
+    function renderEvents() {
+      var list = active === "All" ? EVENTS : EVENTS.filter(function (e) { return e.cat === active; });
+      document.getElementById("events-grid").innerHTML = list.map(function (e) {
+        return '<a class="event-card event-grid-card reveal" href="contact.html" title="' + e.title + '">' +
+          '<div class="event-image-wrapper"><img class="event-image" src="' + e.img + '" alt="' + e.title + '" loading="lazy"><span class="event-card-tag">' + e.cat + '</span></div>' +
+          '<div class="event-card-right-content">' +
+            '<div class="event-card-title">' + e.title + '</div>' +
+            '<div class="event-right-bottom-content"><span class="event-time-location">Enquire for collaborations</span></div>' +
+          '</div>' +
+        '</a>';
+      }).join("");
+      ABS.initReveal();
+    }
+    document.getElementById("int-arrow").innerHTML = ABS.icons.arrow;
+    renderFilters();
+    renderEvents();
+  </script>
+</body>
+</html>

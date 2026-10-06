@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cart — Art Bhagyashree Studio</title>
+  <meta name="description" content="Your cart — Lake Colours and rangoli masterclasses.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+  <div id="site-header"></div>
+
+  <main>
+    <section class="inner-hero-section">
+      <div class="container inner-hero-content-wrapper">
+        <div class="tag-title">
+          <span class="tag-line"></span>
+          <span class="tag-text">Your Cart</span>
+        </div>
+        <h1 class="inner-hero-title">Cart</h1>
+      </div>
+    </section>
+
+    <section class="commerce-section">
+      <div class="container commerce-grid" id="cart-body"></div>
+    </section>
+  </main>
+
+  <div id="site-footer"></div>
+
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/pay.js"></script>
+  <script src="assets/js/app.js"></script>
+  <script src="assets/gsap/3.15.0/gsap.min.js"></script>
+  <script src="assets/gsap/3.15.0/ScrollTrigger.min.js"></script>
+  <script src="assets/js/motion.js"></script>
+  <script>
+    (function () {
+      var body = document.getElementById("cart-body");
+      function render() {
+        var cart = ABS.cart.get();
+        if (!cart.length) {
+          body.innerHTML =
+            '<div class="commerce-card" style="grid-column:1/-1;text-align:center">' +
+              '<div class="empty-state">' +
+                '<div class="empty-icon">' + ABS.icons.cart + '</div>' +
+                '<h2>Your cart is empty</h2>' +
+                '<p style="color:var(--neutral-03);margin-top:8px">Explore the portfolio, Lake Colours, or upcoming tutorials.</p>' +
+                '<div style="margin-top:24px;display:flex;grid-column-gap:12px;justify-content:center">' +
+                  ABS.arrowBtn("Shop Lake Colours", "lake-colours.html") +
+                  '<a class="card-button" href="tutorials.html">Browse Tutorials</a>' +
+                '</div>' +
+              '</div>' +
+            '</div>';
+          return;
+        }
+        var lines = cart.map(function (i) {
+          return '<div class="cart-line">' +
+            '<div class="cart-line-img"><img src="' + i.img + '" alt="' + i.name + '"></div>' +
+            '<div class="cart-line-info">' +
+              '<div class="cart-line-name">' + i.name + '</div>' +
+              '<div class="cart-line-sub">' + i.tagline + '</div>' +
+              '<div class="cart-line-qty" style="margin-top:10px">' +
+                '<button class="qty-btn" data-id="' + i.id + '" data-d="-1" aria-label="Decrease">−</button>' +
+                '<span style="min-width:28px;text-align:center">' + i.qty + '</span>' +
+                '<button class="qty-btn" data-id="' + i.id + '" data-d="1" aria-label="Increase">+</button>' +
+              '</div>' +
+            '</div>' +
+            '<div class="cart-line-price">' + ABS.fmt(i.price * i.qty) + '</div>' +
+          '</div>';
+        }).join("");
+        body.innerHTML =
+          '<div class="commerce-card">' + lines + '</div>' +
+          '<aside class="commerce-card">' +
+            '<h3 class="exhibitions-card-title" style="font-size:28px">Order Summary</h3>' +
+            '<div class="order-summary-row"><span>Subtotal</span><span>' + ABS.fmt(ABS.cart.total()) + '</span></div>' +
+            '<div class="order-summary-row"><span>Shipping</span><span>Calculated at checkout</span></div>' +
+            '<div class="order-summary-row total"><span>Total</span><span>' + ABS.fmt(ABS.cart.total()) + '</span></div>' +
+            '<div style="margin-top:20px">' + ABS.arrowBtn("Proceed to Checkout", "checkout.html") + '</div>' +
+            '<div style="margin-top:12px"><a class="card-button" href="portfolio.html" style="justify-content:center;width:100%">Continue Shopping</a></div>' +
+          '</aside>';
+        body.querySelectorAll(".qty-btn").forEach(function (b) {
+          b.addEventListener("click", function () {
+            var cart2 = ABS.cart.get();
+            var item = cart2.find(function (x) { return x.id === b.dataset.id; });
+            if (!item) return;
+            item.qty += Number(b.dataset.d);
+            if (item.qty <= 0) cart2 = cart2.filter(function (x) { return x.id !== item.id; });
+            ABS.cart.set(cart2);
+            render();
+          });
+        });
+      }
+      render();
+    })();
+  </script>
+</body>
+</html>

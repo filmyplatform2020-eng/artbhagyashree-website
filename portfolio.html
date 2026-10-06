@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portfolio — Art Bhagyashree Studio | Rangoli Works</title>
+  <meta name="description" content="Browse the portfolio of Art Bhagyashree Studio — realistic, traditional, festival and large-scale Rangoli, plus world-record installations.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+  <div id="site-header"></div>
+
+  <main>
+    <section class="inner-hero-section">
+      <div class="container inner-hero-content-wrapper">
+        <div class="tag-title">
+          <span class="tag-line"></span>
+          <span class="tag-text">Portfolio</span>
+        </div>
+        <h1 class="inner-hero-title">Selected Works</h1>
+        <p class="inner-hero-pg" id="portfolio-desc">Every piece below is a real, verified artwork by Bhagyashree — photographed on the floor where it was made.</p>
+      </div>
+    </section>
+
+    <section class="collections-showcase-section" style="padding-top:0">
+      <div class="container">
+        <div class="showcase-content-wrapper">
+          <div class="portfolio-category-grid" id="category-grid"></div>
+          <div class="filter-row" id="filter-row" style="justify-content:center;margin-top:var(--sp-xxl)"></div>
+          <div class="showcase-bottom-card-list" id="portfolio-grid" style="margin-top:var(--sp-regular)"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="site-footer"></div>
+
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/pay.js"></script>
+  <script src="assets/js/app.js"></script>
+  <script src="assets/gsap/3.15.0/gsap.min.js"></script>
+  <script src="assets/gsap/3.15.0/ScrollTrigger.min.js"></script>
+  <script src="assets/js/motion.js"></script>
+  <script>
+    (function () {
+      var catParam = new URLSearchParams(location.search).get("cat");
+      var cats = ["All"].concat(PORTFOLIO_CATEGORIES.map(function (c) { return c.title; }));
+
+      function catForRaw(rawCat) {
+        var found = PORTFOLIO_CATEGORIES.find(function (c) { return c.cats.indexOf(rawCat) > -1; });
+        return found ? found.title : rawCat;
+      }
+
+      /* category cards */
+      var cg = document.getElementById("category-grid");
+      cg.innerHTML = PORTFOLIO_CATEGORIES.map(function (c) {
+        return '<a class="portfolio-category-card reveal" href="?cat=' + encodeURIComponent(c.title) + '">' +
+          '<div class="portfolio-category-image"><img src="' + c.img + '" alt="' + c.title + '" loading="lazy"></div>' +
+          '<div class="portfolio-category-body">' +
+            '<div class="portfolio-category-title">' + c.title + '</div>' +
+            '<div class="portfolio-category-desc">' + c.desc + '</div>' +
+          '</div>' +
+        '</a>';
+      }).join("");
+
+      /* filter chips */
+      var fr = document.getElementById("filter-row");
+      fr.innerHTML = cats.map(function (c) {
+        var active = (!catParam && c === "All") || (catParam === c);
+        return '<button class="filter-pill' + (active ? " active" : "") + '" data-cat="' + c + '">' + c + '</button>';
+      }).join("");
+
+      var grid = document.getElementById("portfolio-grid");
+      function render(cat) {
+        var list = cat === "All"
+          ? ARTWORK
+          : ARTWORK.filter(function (a) { return catForRaw(a.cat) === cat; });
+        var descEl = document.getElementById("portfolio-desc");
+        if (cat === "All") {
+          descEl.textContent = "Every piece below is a real, verified artwork by Bhagyashree — photographed on the floor where it was made.";
+        } else {
+          var catObj = PORTFOLIO_CATEGORIES.find(function (c) { return c.title === cat; });
+          descEl.textContent = catObj ? catObj.desc : "";
+        }
+        grid.innerHTML = list.map(function (a) {
+          return '<a class="showcase-card reveal" href="portfolio.html?cat=' + encodeURIComponent(catForRaw(a.cat)) + '" title="' + a.title + '">' +
+            '<div class="showcase-image-wrapper v4">' +
+              '<img src="' + a.img + '" alt="' + a.title + ' — ' + catForRaw(a.cat) + ' by Bhagyashree" loading="lazy">' +
+            '</div>' +
+            '<div class="showcase-card-bottom-content">' +
+              '<span class="showcase-card-tag">' + catForRaw(a.cat) + '</span>' +
+              '<span class="showcase-card-title">' + a.title + '</span>' +
+            '</div>' +
+          '</a>';
+        }).join("");
+        ABS.initReveal();
+      }
+      render(catParam || "All");
+
+      fr.addEventListener("click", function (e) {
+        var chip = e.target.closest(".filter-pill");
+        if (!chip) return;
+        fr.querySelectorAll(".filter-pill").forEach(function (b) { b.classList.remove("active"); });
+        chip.classList.add("active");
+        render(chip.dataset.cat);
+      });
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Learning — Art Bhagyashree Studio</title>
+  <meta name="description" content="Your purchased rangoli tutorials and progress.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+  <div id="site-header"></div>
+
+  <main>
+    <section class="inner-hero-section">
+      <div class="container inner-hero-content-wrapper">
+        <div class="tag-title">
+          <span class="tag-line"></span>
+          <span class="tag-text">My Learning</span>
+        </div>
+        <h1 class="inner-hero-title">Your Tutorials</h1>
+      </div>
+    </section>
+
+    <section class="commerce-section" id="learning-body">
+      <div class="container"></div>
+    </section>
+  </main>
+
+  <div id="site-footer"></div>
+
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/pay.js"></script>
+  <script src="assets/js/app.js"></script>
+  <script src="assets/gsap/3.15.0/gsap.min.js"></script>
+  <script src="assets/gsap/3.15.0/ScrollTrigger.min.js"></script>
+  <script src="assets/js/motion.js"></script>
+  <script>
+    (function () {
+      var owned = ABS.purchasedTutorials();
+      var body = document.querySelector("#learning-body .container");
+
+      if (!owned.length) {
+        body.innerHTML =
+          '<div class="commerce-card">' +
+            '<div class="empty-state">' +
+              '<div class="empty-icon">' + ABS.icons.lock + '</div>' +
+              '<h2>No tutorials yet</h2>' +
+              '<p style="color:var(--neutral-03);margin-top:8px">Purchase a masterclass to unlock your learning dashboard. All courses are coming soon.</p>' +
+              '<div style="margin-top:24px">' + ABS.arrowBtn("Browse Tutorials", "tutorials.html") + '</div>' +
+            '</div>' +
+          '</div>';
+        return;
+      }
+
+      var progress = ABS.getProgress();
+      var cards = owned.map(function (id) {
+        var t = TUTORIALS.find(function (x) { return x.id === id; });
+        if (!t) return "";
+        var done = (progress[t.id] || []).length;
+        var pct = Math.round((done / t.lessons) * 100);
+        return '<div class="commerce-card">' +
+          '<div style="display:flex;grid-column-gap:var(--sp-regular);align-items:center;flex-wrap:wrap">' +
+            '<div class="cart-line-img" style="width:120px;height:96px"><img src="' + t.cover + '" alt=""></div>' +
+            '<div style="flex:1;min-width:200px">' +
+              '<div class="cart-line-name">' + t.title + '</div>' +
+              '<div class="cart-line-sub">' + done + ' / ' + t.lessons + ' lessons completed</div>' +
+              '<div class="progress-fill" style="margin-top:10px;max-width:320px"><span style="width:' + pct + '%"></span></div>' +
+            '</div>' +
+            '<a class="card-button" href="tutorial.html?id=' + t.id + '">Open Course</a>' +
+          '</div>' +
+        '</div>';
+      }).join("");
+      body.innerHTML = cards;
+    })();
+  </script>
+</body>
+</html>
