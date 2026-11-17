@@ -152,16 +152,33 @@
   window.ABS.markLesson = markLesson;
 
   /* ---------- header / footer injection (reference UI) ---------- */
+  /* ---------- global navigation config (single source of truth) ---------- */
+  /* Primary items — the six top-level destinations (bhagya_09 spec). */
   const MENU = [
-    { t: "Home", s: "Home", h: "index.html" },
-    { t: "About", s: "About", h: "about.html" },
-    { t: "Portfolio", s: "Portfolio", h: "portfolio.html" },
-    { t: "Events & Collaborations", s: "Events", h: "events.html" },
-    { t: "International", s: "International", h: "international.html" },
-    { t: "नवरंग कलावर्ग", s: "कलावर्ग", h: "workshops.html" },
-    { t: "Lake Colours", s: "Lake Colours", h: "lake-colours.html" },
-    { t: "Contact", s: "Contact", h: "contact.html" }
+    { t: "HOME", h: "index.html" },
+    { t: "PORTFOLIO", h: "portfolio.html" },
+    { t: "LAKE COLOURS", h: "lake-colours.html" },
+    { t: "TUTORIALS", h: "tutorials.html" },
+    { t: "ABOUT", h: "about.html" },
+    { t: "CONTACT", h: "contact.html" }
   ];
+
+  /* Secondary destinations — reachable from the "More" dropdown (desktop)
+     and inside the slide-in panel (mobile). Nothing is removed. */
+  const MORE_LINKS = [
+    { t: "Events & Collaborations", h: "events.html" },
+    { t: "International", h: "international.html" },
+    { t: "नवरंग कलावर्ग / Workshops", h: "workshops.html" },
+    { t: "My Learning", h: "my-learning.html" }
+  ];
+
+  /* Official logo: the approved transparent PNG (BHAGYA.png) lives untouched at
+     assets/img/brand/BHAGYA.png. bhagya-logo.png is a proportionally downscaled
+     copy (170x160, same aspect ratio, alpha intact) used in the header so the
+     1 MB master is never shipped to every page load. */
+  const LOGO_SRC = "assets/img/brand/bhagya-logo.png";
+  const LOGO_ALT = "ART BHAGYASHREE STUDIO";
+  const LOGO_WITH_WORDMARK = true; /* logo mark + brand name beside it */
 
   const FOOTER_LINKS = [
     { col: "Studio", links: [
@@ -189,36 +206,70 @@
     if (!host) return;
     const user = getUser();
     const path = location.pathname.split("/").pop() || "index.html";
+    const isActive = (href) => path === href;
+    const moreActive = MORE_LINKS.some((n) => n.h === path);
+
+    const wordmark = '<span class="logo-wordmark">' + esc(SITE.brand) + ' <span class="brand-script">Studio</span></span>';
+    const logoInner = LOGO_SRC
+      ? '<img class="logo-mark" src="' + LOGO_SRC + '" alt="' + esc(LOGO_ALT) + '" width="170" height="160" decoding="async">' +
+        (LOGO_WITH_WORDMARK ? wordmark : '')
+      : '<span class="site-logo">' + esc(SITE.brand) + ' <span class="brand-script">Studio</span></span>';
+
     host.innerHTML =
-      '<div class="navbar">' +
-        '<div class="container nav-wrapper">' +
-          '<a class="nav-logo" href="index.html" aria-label="' + esc(SITE.name) + ' home">' +
-            '<span class="site-logo">' + esc(SITE.brand) + ' <span class="brand-script">Studio</span></span>' +
-          '</a>' +
-          '<nav class="nav-menu" aria-label="Primary">' +
-            MENU.map(function (n) {
-              var active = (path === n.h) ? " active" : "";
-              return '<a class="nav-menu-link' + active + '" href="' + n.h + '">' + esc(n.s || n.t) + '</a>';
-            }).join("") +
-          '</nav>' +
-          '<div class="nav-actions">' +
-            '<a class="nav-cart-link" href="cart.html" aria-label="Cart">' + ICONS.cart + '<span class="cart-count" id="cart-count" style="display:none">0</span></a>' +
-            arrowBtn(user ? "My Learning" : "Learn Rangoli", user ? "my-learning.html" : "workshops.html") +
-            '<button class="menu-trigger" id="menu-trigger" aria-label="Open menu" aria-expanded="false"><span class="trigger-icon-2"></span><span class="trigger-icon-2"></span><span class="trigger-icon-2"></span></button>' +
+      '<header class="site-header-bar">' +
+        '<div class="navbar">' +
+          '<div class="container nav-wrapper">' +
+            '<a class="nav-logo" href="index.html" aria-label="' + esc(LOGO_ALT) + ' — home">' +
+              '<span class="logo-slot">' + logoInner + '</span>' +
+            '</a>' +
+            '<nav class="nav-menu" id="nav-menu" aria-label="Primary">' +
+              MENU.map(function (n) {
+                const active = isActive(n.h);
+                return '<a class="nav-menu-link' + (active ? " active" : "") + '" href="' + n.h + '"' +
+                  (active ? ' aria-current="page"' : '') + '>' + esc(n.t) + '</a>';
+              }).join("") +
+              '<div class="nav-dropdown" id="nav-dropdown">' +
+                '<button class="nav-dropdown-toggle" id="nav-dropdown-toggle" aria-expanded="false" aria-haspopup="true" aria-controls="nav-dropdown-panel">' +
+                  'More<span class="chev" aria-hidden="true"></span>' +
+                '</button>' +
+                '<div class="nav-dropdown-panel" id="nav-dropdown-panel" role="menu">' +
+                  MORE_LINKS.map(function (n) {
+                    const active = isActive(n.h);
+                    return '<a role="menuitem" href="' + n.h + '"' + (active ? ' aria-current="page"' : '') + '>' + esc(n.t) + '</a>';
+                  }).join("") +
+                '</div>' +
+              '</div>' +
+            '</nav>' +
+            '<div class="nav-actions">' +
+              '<a class="nav-cart-link" href="cart.html" aria-label="Cart">' + ICONS.cart + '<span class="cart-count" id="cart-count" style="display:none">0</span></a>' +
+              arrowBtn("Explore Workshops", "workshops.html") +
+              '<button class="menu-trigger" id="menu-trigger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="menu-wrapper">' +
+                '<span class="trigger-icon-2"></span><span class="trigger-icon-2"></span><span class="trigger-icon-2"></span>' +
+              '</button>' +
+            '</div>' +
           '</div>' +
         '</div>' +
-      '</div>' +
+      '</header>' +
       '<div class="menu-wrapper" id="menu-wrapper">' +
-        '<div class="menu-content-wrapper" role="dialog" aria-label="Menu">' +
-          '<button class="menu-close" id="menu-close" aria-label="Close menu">' + ICONS.close + '</button>' +
+        '<div class="menu-content-wrapper" id="menu-panel" role="dialog" aria-modal="true" aria-label="Site menu">' +
+          '<button class="menu-close" id="menu-close" type="button" aria-label="Close menu">' + ICONS.close + '</button>' +
           '<div class="menu-head">' +
             '<div class="tag-title"><span class="tag-line"></span><span class="tag-text">Menu</span></div>' +
             '<div class="menu-title" style="margin-top:10px">Explore the Studio</div>' +
           '</div>' +
           '<ul class="menu-items">' +
             MENU.map((n) =>
-              '<li class="menu-item-wrapper"><a class="menu-item-link" href="' + n.h + '">' +
-                '<span>' + n.t + '</span><span class="menu-item-arrow">' + ICONS.arrow + '</span></a></li>'
+              '<li class="menu-item-wrapper"><a class="menu-item-link" href="' + n.h + '"' +
+                (isActive(n.h) ? ' aria-current="page"' : '') + '>' +
+                '<span>' + esc(n.t) + '</span><span class="menu-item-arrow" aria-hidden="true">' + ICONS.arrow + '</span></a></li>'
+            ).join("") +
+          '</ul>' +
+          '<div class="menu-group-label">More</div>' +
+          '<ul class="menu-items">' +
+            MORE_LINKS.map((n) =>
+              '<li class="menu-item-wrapper"><a class="menu-item-link" href="' + n.h + '"' +
+                (isActive(n.h) ? ' aria-current="page"' : '') + '>' +
+                '<span>' + esc(n.t) + '</span><span class="menu-item-arrow" aria-hidden="true">' + ICONS.arrow + '</span></a></li>'
             ).join("") +
           '</ul>' +
           '<div class="menu-foot">' +
@@ -232,6 +283,10 @@
         '</div>' +
       '</div>';
     renderCartCount();
+    if (moreActive) {
+      const t = $("#nav-dropdown-toggle");
+      if (t) t.classList.add("has-active");
+    }
   }
 
   function renderFooter() {
@@ -258,7 +313,8 @@
             '</div>' +
             '<div class="footer-bottom-content">' +
               '<div class="footer-logo-paragraph">' +
-                '<a class="footer-logo" href="index.html">' +
+                '<a class="footer-logo" href="index.html" aria-label="' + esc(LOGO_ALT) + ' — home">' +
+                  (LOGO_SRC ? '<img class="footer-logo-mark" src="' + LOGO_SRC + '" alt="" width="170" height="160" loading="lazy" decoding="async">' : '') +
                   '<span class="site-logo" style="font-size:26px">' + esc(SITE.brand) + ' <span class="brand-script">Studio</span></span>' +
                 '</a>' +
                 '<p class="footer-logo-pg">' + esc(SITE.tagline) + '. Indian folk art, large-format installations and Rangoli education from ' + esc(SITE.location) + '.</p>' +
@@ -297,21 +353,91 @@
       '</div>';
   }
 
-  /* ---------- menu behavior ---------- */
+  /* ---------- menu behavior (accessible slide-in panel) ---------- */
+  const FOCUSABLE = 'a[href], button:not([disabled]), input, select, textarea, [tabindex]:not([tabindex="-1"])';
+
   function initMenu() {
     const wrap = $("#menu-wrapper");
+    const panel = $("#menu-panel");
     const trigger = $("#menu-trigger");
     const close = $("#menu-close");
-    if (!wrap) return;
+    if (!wrap || !panel) return;
+
+    let lastFocus = null;
+    const isOpen = () => wrap.classList.contains("open");
+
     const set = (open) => {
+      if (open === isOpen()) return;
       wrap.classList.toggle("open", open);
-      if (trigger) { trigger.setAttribute("aria-expanded", String(open)); }
-      document.body.style.overflow = open ? "hidden" : "";
+      if (trigger) trigger.setAttribute("aria-expanded", String(open));
+      if (open) {
+        lastFocus = document.activeElement;
+        document.documentElement.classList.add("menu-open");
+        document.body.style.overflow = "hidden";
+        const first = panel.querySelector(FOCUSABLE);
+        if (first) setTimeout(() => first.focus({ preventScroll: true }), 120);
+      } else {
+        document.documentElement.classList.remove("menu-open");
+        document.body.style.overflow = "";
+        if (lastFocus && typeof lastFocus.focus === "function") lastFocus.focus({ preventScroll: true });
+      }
     };
-    if (trigger) trigger.addEventListener("click", () => set(true));
+
+    if (trigger) trigger.addEventListener("click", () => set(!isOpen()));
     if (close) close.addEventListener("click", () => set(false));
     wrap.addEventListener("click", (e) => { if (e.target === wrap) set(false); });
-    $$(".menu-item-link", wrap).forEach((a) => a.addEventListener("click", () => set(false)));
+    panel.querySelectorAll("a").forEach((a) => a.addEventListener("click", () => set(false)));
+
+    document.addEventListener("keydown", (e) => {
+      if (!isOpen()) return;
+      if (e.key === "Escape") { e.preventDefault(); set(false); return; }
+      if (e.key !== "Tab") return;
+      const items = Array.from(panel.querySelectorAll(FOCUSABLE)).filter((el) => el.offsetParent !== null);
+      if (!items.length) return;
+      const first = items[0];
+      const last = items[items.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    });
+
+    window.matchMedia("(min-width: 992px)").addEventListener("change", (ev) => {
+      if (ev.matches) set(false);
+    });
+  }
+
+  /* ---------- "More" dropdown (desktop, keyboard accessible) ---------- */
+  function initDropdown() {
+    const dd = $("#nav-dropdown");
+    const toggle = $("#nav-dropdown-toggle");
+    if (!dd || !toggle) return;
+    const set = (open) => {
+      dd.classList.toggle("open", open);
+      toggle.setAttribute("aria-expanded", String(open));
+    };
+    toggle.addEventListener("click", (e) => {
+      e.stopPropagation();
+      set(!dd.classList.contains("open"));
+    });
+    document.addEventListener("click", (e) => { if (!dd.contains(e.target)) set(false); });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && dd.classList.contains("open")) { set(false); toggle.focus(); }
+    });
+    dd.querySelectorAll(".nav-dropdown-panel a").forEach((a) => a.addEventListener("click", () => set(false)));
+  }
+
+  /* ---------- sticky header: subtle elevation once the page scrolls ---------- */
+  function initHeaderScroll() {
+    const host = $("#site-header");
+    if (!host) return;
+    let ticking = false;
+    const apply = () => {
+      host.classList.toggle("is-stuck", window.scrollY > 8);
+      ticking = false;
+    };
+    apply();
+    window.addEventListener("scroll", () => {
+      if (!ticking) { ticking = true; requestAnimationFrame(apply); }
+    }, { passive: true });
   }
 
   /* ---------- hero ticker build ---------- */
@@ -481,6 +607,8 @@
     renderHeader();
     renderFooter();
     initMenu();
+    initDropdown();
+    initHeaderScroll();
     initNewsletter();
     initReveal();
   }
